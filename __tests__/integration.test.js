@@ -15,6 +15,28 @@ describe('/notAPath', () => {
     });
 });
 
+describe('/api', () => {
+    test('GET: 200 should respond with an object that contains all available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(response => {
+            expect(typeof response.body).toBe('object');
+            const objArr = [];
+            for (const key in response.body) {
+                objArr.push(response.body[key]);
+            }
+            objArr.forEach(() => {
+                expect.objectContaining({
+                    "description": expect.any(String),
+                    "queries": expect.any(Array),
+                    "exampleResponse": expect.any(Object)
+                })
+            })
+        })
+    })
+});
+
 describe('/api/topics', () => {
     test('GET: 200 sends an array of topics to the client', () => {
         return request(app)
