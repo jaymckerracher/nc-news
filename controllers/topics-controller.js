@@ -5,4 +5,5 @@ exports.getTopics = (req, res, next) => {
         .then(rows => {
             res.status(200).send({topics: rows});
         })
+        .catch(next);
 }
