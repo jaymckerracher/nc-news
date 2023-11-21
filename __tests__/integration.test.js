@@ -2,11 +2,11 @@ const request = require('supertest');
 const app = require(`${__dirname}/../app`);
 const db = require(`${__dirname}/../db/connection`);
 const seed = require(`${__dirname}/../db/seeds/seed`);
-const testData = require(`${__dirname}/../db/data/test-data/index`);
+const {articleData, commentData, topicData, userData} = require(`${__dirname}/../db/data/test-data/index`);
 
 const endpointsJson = require(`${__dirname}/../endpoints`)
 
-beforeEach(() => seed(testData));
+beforeEach(() => seed({articleData, commentData, topicData, userData}));
 afterAll(() => db.end());
 
 describe('/notAPath', () => {
@@ -93,6 +93,33 @@ describe('/api/articles/:article_id', () => {
         .expect(404)
         .then(response => {
             expect(response.body.msg).toBe('Not Found')
+        })
+    });
+});
+
+describe('/api/articles', () => {
+    test('GET 200: responds with an array of article objects', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toBe(articleData.length);
+            expect(body.length).toBe(13);
+            for (let i=0; i<body.length - 1; i++) {
+                expect(body[i].created_at > body[i + 1].created_at);
+            }
+            body.forEach(() => {
+                expect.objectContaining({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+            })
         })
     });
 });
