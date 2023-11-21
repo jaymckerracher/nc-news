@@ -9,7 +9,7 @@ exports.getCommentsByArticle = (req, res, next) => {
             return selectCommentsFromArticle(article_id)
         })
         .then(result => {
-            res.status(200).send(result)
+            res.status(200).send({comments: result})
         })
         .catch(next)
 }

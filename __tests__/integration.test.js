@@ -98,13 +98,14 @@ describe('/api/articles/:article_id', () => {
 });
 
 describe('/api/articles/:article_id/comments', () => {
-    test('GET 200: sends an array of comments that belong to the given article', () => {
+    test.only('GET 200: sends an array of comments that belong to the given article', () => {
         return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body.length).toBe(11);
-            body.forEach(() => {
+            const comments = body.comments;
+            expect(comments.length).toBe(11);
+            comments.forEach(() => {
                 expect.objectContaining({
                     comment_id: expect.any(Number),
                     body: expect.any(String),
@@ -114,8 +115,8 @@ describe('/api/articles/:article_id/comments', () => {
                     created_at: expect.any(String)
                 })
             })
-            expect(body).toBeSorted('created_at', {ascending: true})
-            expect(body[0]).toMatchObject({
+            expect(comments).toBeSorted('created_at', {ascending: true})
+            expect(comments[0]).toMatchObject({
                 comment_id: 9,
                 body: 'Superficially charming',
                 article_id: 1,
@@ -130,7 +131,7 @@ describe('/api/articles/:article_id/comments', () => {
         .get('/api/articles/7/comments')
         .expect(200)
         .then(({body}) => {
-            expect(body).toEqual([]);
+            expect(body.comments).toEqual([]);
         })
     });
     test('GET 400: sends an appropriate status and error message when an invalid id is used', () => {
