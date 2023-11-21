@@ -4,6 +4,8 @@ const db = require(`${__dirname}/../db/connection`);
 const seed = require(`${__dirname}/../db/seeds/seed`);
 const testData = require(`${__dirname}/../db/data/test-data/index`);
 
+const endpointsJson = require(`${__dirname}/../endpoints`)
+
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
@@ -16,6 +18,29 @@ describe('/notAPath', () => {
             expect(response.body.msg).toBe('Not Found');
         })
     });
+});
+
+describe('/api', () => {
+    test('GET: 200 should respond with an object that contains all available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(response => {
+            expect(typeof response.body).toBe('object');
+            const objArr = [];
+            for (const key in response.body) {
+                objArr.push(response.body[key]);
+            }
+            objArr.forEach(() => {
+                expect.objectContaining({
+                    "description": expect.any(String),
+                    "queries": expect.any(Array),
+                    "exampleResponse": expect.any(Object)
+                })
+            })
+            expect(response.body).toEqual(endpointsJson)
+        })
+    })
 });
 
 describe('/api/topics', () => {

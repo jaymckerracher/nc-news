@@ -1,11 +1,14 @@
 const express = require('express');
 const { handlePsqlErrors, handleCustomErrors, handleInvalidPath, handleServerErrors } = require('./error-handlers');
 const { getArticleById } = require('./controllers/articles-controller');
+const { getEndpoints } = require('./controllers/api-controller');
 const { getTopics } = require(`${__dirname}/controllers/topics-controller`);
 
 const app = express();
 
 app.use(express.json());
+
+app.get('/api', getEndpoints);
 
 app.get('/api/topics', getTopics);
 
