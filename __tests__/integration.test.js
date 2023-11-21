@@ -4,6 +4,8 @@ const db = require(`${__dirname}/../db/connection`);
 const seed = require(`${__dirname}/../db/seeds/seed`);
 const testData = require(`${__dirname}/../db/data/test-data/index`);
 
+const endpointsJson = require(`${__dirname}/../endpoints`)
+
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
@@ -33,6 +35,7 @@ describe('/api', () => {
                     "exampleResponse": expect.any(Object)
                 })
             })
+            expect(response.body).toEqual(endpointsJson)
         })
     })
 });
