@@ -14,8 +14,8 @@ describe('/notAPath', () => {
         return request(app)
         .get('/notAPath')
         .expect(404)
-        .then(response => {
-            expect(response.body.msg).toBe('Not Found');
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found');
         })
     });
 });
@@ -25,22 +25,36 @@ describe('/api', () => {
         return request(app)
         .get('/api')
         .expect(200)
-        .then(response => {
-            expect(typeof response.body).toBe('object');
-            const objArr = [];
-            for (const key in response.body) {
-                objArr.push(response.body[key]);
+        .then(({body}) => {
+            expect(typeof body).toBe('object');
+        })
+    });
+    test('GET: 200 each endpoint object should contain the same expected properties', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            const endpointArr = [];
+            for (const key in body) {
+                endpointArr.push(body[key]);
             }
-            objArr.forEach(() => {
+            endpointArr.forEach(() => {
                 expect.objectContaining({
                     "description": expect.any(String),
                     "queries": expect.any(Array),
                     "exampleResponse": expect.any(Object)
                 })
             })
-            expect(response.body).toEqual(endpointsJson)
         })
-    })
+    });
+    test('GET: 200 the returned object should match that of the json file', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual(endpointsJson);
+        })
+    });
 });
 
 describe('/api/topics', () => {
@@ -48,9 +62,17 @@ describe('/api/topics', () => {
         return request(app)
         .get('/api/topics')
         .expect(200)
-        .then(response => {
-            const topicsArr = response.body.topics
+        .then(({body}) => {
+            const topicsArr = body.topics;
             expect(topicsArr.length).toBe(3); //length check
+        })
+    });
+    test('GET: 200 each topic should contain the same expected properties', () => {
+        return request(app)
+        .get('/api/topics')
+        .expect(200)
+        .then(({body}) => {
+            const topicsArr = body.topics;
             topicsArr.forEach(() => { //object format check
                 expect.objectContaining({
                     description: expect.any(String),
@@ -105,9 +127,23 @@ describe('/api/articles', () => {
         .then(({body}) => {
             expect(body.length).toBe(articleData.length);
             expect(body.length).toBe(13);
+        })
+    });
+    test('GET: 200 the sent array should be sorted by the created_at field with the oldest item being at index 0', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
             for (let i=0; i<body.length - 1; i++) {
                 expect(body[i].created_at > body[i + 1].created_at);
             }
+        })
+    });
+    test('GET: 200 each article should have the same expected properties', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
             body.forEach(() => {
                 expect.objectContaining({
                     author: expect.any(String),
