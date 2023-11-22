@@ -170,7 +170,64 @@ describe('/api/articles/:article_id/comments', () => {
             const {msg} = body;
             expect(msg).toBe('Not Found')
         })
-    })
+    });
+    test('POST: 201 adds a new comment in the comment table', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username: 'icellusedkars', body: 'This is a new comment!'})
+        .expect(201)
+        .then(({body}) => {
+            const {comment} = body;
+            expect(comment).toMatchObject({
+                comment_id: 19,
+                body: "This is a new comment!",
+                votes: 0,
+                author: "icellusedkars",
+                article_id: 1,
+                created_at: expect.any(String),
+            })
+        })
+    });
+    test('POST: 400 sends an appropriate status and error message if one or more required fields are empty', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({})
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('POST: 400 sends an appropriate status and error message if fields violate constraints', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username: 7, body: 'This is a new comment!'})
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('POST: 400 sends an appropriate status and error message if the comment body is not a valid length', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username: 'icellusedkars', body: ''})
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('POST: 404 sends an appropriate status and error message if the user does not exist', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username: 'jaymckerracher', body: 'This is a new comment!'})
+        .expect(404)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('User Not Found')
+        })
+    });
 })
 
 describe('/api/articles', () => {

@@ -1,9 +1,9 @@
-const { selectCommentsFromArticle } = require('../models/comments-model')
-const { checkArticleExists } = require('../models/articles-model')
+const { selectCommentsFromArticle, insertCommentIntoArticle } = require('../models/comments-model')
+const { checkArticleExists } = require('../models/articles-model');
+const { checkUserExists } = require('../models/users-model');
 
 exports.getCommentsByArticle = (req, res, next) => {
     const {article_id} = req.params;
-
     checkArticleExists(article_id)
         .then(() => {
             return selectCommentsFromArticle(article_id)
@@ -12,4 +12,23 @@ exports.getCommentsByArticle = (req, res, next) => {
             res.status(200).send({comments: result})
         })
         .catch(next)
+}
+
+exports.postCommentByArticle = (req, res, next) => {
+    const {article_id} = req.params;
+    const comment_body = req.body;
+    const {username, body} = comment_body;
+    
+    if (typeof username !== 'string' || username.length < 1 || typeof body !== 'string' || body.length < 1) {
+        res.status(400).send({msg: 'Bad Request'})
+    } else {
+        checkUserExists(username)
+        .then(() => {
+            return insertCommentIntoArticle(article_id, username, body)
+        })
+        .then(result => {
+            res.status(201).send({comment: result})
+        })
+        .catch(next)
+    }
 }
