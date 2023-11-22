@@ -13,8 +13,7 @@ exports.selectArticle = (id) => {
             }
             return article;
         })
-
-}
+};
 
 exports.checkArticleExists = (id) => {
     return db
@@ -28,7 +27,7 @@ exports.checkArticleExists = (id) => {
                 });
             }
             return article;
-
+        })
 };
 
 exports.selectAllArticles = () => {
@@ -43,6 +42,5 @@ exports.selectAllArticles = () => {
         `)
         .then(({rows}) => {
             return rows;
-
         })
-}
+};

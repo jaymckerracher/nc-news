@@ -4,7 +4,6 @@ const { getEndpoints } = require('./controllers/api-controller');
 const { getCommentsByArticle } = require('./controllers/comments-controller');
 const { getArticleById, getArticles } = require('./controllers/articles-controller');
 const { getTopics } = require(`${__dirname}/controllers/topics-controller`);
-const { getEndpoints } = require('./controllers/api-controller');
 
 const app = express();
 
