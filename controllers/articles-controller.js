@@ -1,3 +1,6 @@
+
+const { selectArticle, selectCommentsFromArticle } = require("../models/articles-model");
+
 const { selectArticle, selectAllArticles } = require("../models/articles-model");
 
 exports.getArticleById = (req, res, next) => {
