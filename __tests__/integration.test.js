@@ -95,7 +95,7 @@ describe('/api/articles/:article_id', () => {
             })
         })
     });
-    test('GET 400: sends an appropriate status and error message when sent an invalid ID', () => {
+    test('GET: 400 sends an appropriate status and error message when sent an invalid ID', () => {
         return request(app)
         .get('/api/articles/apple')
         .expect(400)
@@ -104,7 +104,7 @@ describe('/api/articles/:article_id', () => {
             expect(msg).toBe('Bad Request');
         })
     });
-    test('GET 404: sends an appropriate status and error message when given a resource that does not exist', () => {
+    test('GET: 404 sends an appropriate status and error message when given a resource that does not exist', () => {
         return request(app)
         .get('/api/articles/999')
         .expect(404)
@@ -113,10 +113,108 @@ describe('/api/articles/:article_id', () => {
             expect(msg).toBe('Article Not Found')
         })
     });
+    test('PATCH: 200 sends back the correct article that has had its votes property changed', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes : 1 })
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body;
+            expect(article).toMatchObject({
+                article_id: 2,
+                title: "Sony Vaio; or, The Laptop",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+                created_at: "2020-10-16T05:03:00.000Z",
+                votes: 1,
+                article_img_url:"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+        })
+    });
+    test('PATCH: 200 the sent object should be able to change the votes property of the article both positive and negative numbers', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes : -1 })
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body;
+            expect(article).toMatchObject({
+                article_id: 2,
+                title: "Sony Vaio; or, The Laptop",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+                created_at: "2020-10-16T05:03:00.000Z",
+                votes: -1,
+                article_img_url:"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when passed an object with missing required fields', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({})
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when the required object fields are the wrong data type', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 'Word' })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when sent a number that is not an integer', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 1.5 })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when the inc_votes property of the sent object is 0', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 0 })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 404 sends an appropriate status and response when provided with a valid path that does not exist', () => {
+        return request(app)
+        .patch('/api/articles/999')
+        .send({ inc_votes: 2 })
+        .expect(404)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Article Not Found')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when given an invalid article id', () => {
+        return request(app)
+        .patch('/api/articles/apple')
+        .send({ inc_votes: 2 })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
 });
 
 describe('/api/articles/:article_id/comments', () => {
-    test('GET 200: sends an array of comments that belong to the given article', () => {
+    test('GET: 200 sends an array of comments that belong to the given article', () => {
         return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
@@ -144,7 +242,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(comments).toBeSorted('created_at', {ascending: true});
         })
     });
-    test('GET 200: sends back an empty array should the article have no comments', () => {
+    test('GET: 200 sends back an empty array should the article have no comments', () => {
         return request(app)
         .get('/api/articles/7/comments')
         .expect(200)
@@ -153,7 +251,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(comments).toEqual([]);
         })
     });
-    test('GET 400: sends an appropriate status and error message when an invalid id is used', () => {
+    test('GET: 400 sends an appropriate status and error message when an invalid id is used', () => {
         return request(app)
         .get('/api/articles/apple/comments')
         .expect(400)
@@ -162,7 +260,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(msg).toBe('Bad Request')
         })
     });
-    test('GET 404: sends an appropriate status and error when given a resource that does not exist', () => {
+    test('GET: 404 sends an appropriate status and error when given a resource that does not exist', () => {
         return request(app)
         .get('/api/articles/999/comments')
         .expect(404)
@@ -251,7 +349,7 @@ describe('/api/articles/:article_id/comments', () => {
 })
 
 describe('/api/articles', () => {
-    test('GET 200: responds with an array of article objects', () => {
+    test('GET: 200 responds with an array of article objects', () => {
         return request(app)
         .get('/api/articles')
         .expect(200)

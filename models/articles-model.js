@@ -44,3 +44,21 @@ exports.selectAllArticles = () => {
             return rows;
         })
 };
+
+exports.checkValidPatch = (inc_votes) => {
+    if (typeof inc_votes !== 'number' || !Number.isInteger(inc_votes) || inc_votes === 0) return false;
+    return true;
+}
+
+exports.patchArticleById = (id, votes) => {
+    return db
+        .query(`
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;
+        `, [votes, id])
+        .then(({rows}) => {
+            return rows[0];
+        })
+};
