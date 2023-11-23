@@ -23,3 +23,8 @@ exports.insertCommentIntoArticle = (id, username, body) => {
             return rows[0];
         })
 }
+
+exports.checkValidComment = (username, body) => {
+    if (typeof username !== 'string' || username.length < 1 || typeof body !== 'string' || body.length < 1) return false;
+    return true;
+}
