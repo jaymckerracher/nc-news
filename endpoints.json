@@ -62,6 +62,21 @@
       ]
     }
   },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment that is related to one of the articles",
+    "queries": [],
+    "exampleRequest": {"username": "icellusedkars", "body": "This is a new comment!"},
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "This is a new comment!",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 1,
+        "created_at": "2023-11-23T08:36:12.660Z"
+      }
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves an individual article object",
     "queries": [],
