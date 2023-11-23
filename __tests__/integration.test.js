@@ -110,7 +110,7 @@ describe('/api/articles/:article_id', () => {
         .expect(404)
         .then(({body}) => {
             const {msg} = body;
-            expect(msg).toBe('Not Found')
+            expect(msg).toBe('Article Not Found')
         })
     });
 });
@@ -168,7 +168,7 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(404)
         .then(({body}) => {
             const {msg} = body;
-            expect(msg).toBe('Not Found')
+            expect(msg).toBe('Article Not Found')
         })
     });
     test('POST: 201 adds a new comment in the comment table', () => {
@@ -198,7 +198,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(msg).toBe('Bad Request')
         })
     });
-    test('POST: 400 sends an appropriate status and error message if fields violate constraints', () => {
+    test('POST: 400 sends an appropriate status and error message if either of the sent objects fields are not strings', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .send({username: 7, body: 'This is a new comment!'})
@@ -226,6 +226,26 @@ describe('/api/articles/:article_id/comments', () => {
         .then(({body}) => {
             const {msg} = body;
             expect(msg).toBe('User Not Found')
+        })
+    });
+    test('POST: 400 sends an appropriate status and error message if sent an invalid id', () => {
+        return request(app)
+        .post('/api/articles/apple/comments')
+        .send({username: 'icellusedkars', body: 'This is a new comment!'})
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('POST: 404 sends an appropriate status and error message when given a resource that does not exist', () => {
+        return request(app)
+        .post('/api/articles/999/comments')
+        .send({username: 'icellusedkars', body: 'This is a new comment!'})
+        .expect(404)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Article Not Found')
         })
     });
 })

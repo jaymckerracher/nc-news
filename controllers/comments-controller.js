@@ -21,13 +21,16 @@ exports.postCommentByArticle = (req, res, next) => {
     
     if (checkValidComment(username, body)) {
         checkUserExists(username)
-        .then(() => {
-            return insertCommentIntoArticle(article_id, username, body)
-        })
-        .then(result => {
-            res.status(201).send({comment: result})
-        })
-        .catch(next)
+            .then(() => {
+                return checkArticleExists(article_id)
+            })
+            .then(() => {
+                return insertCommentIntoArticle(article_id, username, body)
+            })
+            .then(result => {
+                res.status(201).send({comment: result})
+            })
+            .catch(next)
     } else {
         res.status(400).send({msg: 'Bad Request'})
     }

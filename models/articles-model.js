@@ -8,7 +8,7 @@ exports.selectArticle = (id) => {
             if (!article) {
                 return Promise.reject({
                     status: 404,
-                    msg: 'Not Found'
+                    msg: 'Article Not Found'
                 });
             }
             return article;
@@ -23,7 +23,7 @@ exports.checkArticleExists = (id) => {
             if(!article) {
                 return Promise.reject({
                     status: 404,
-                    msg: 'Not Found'
+                    msg: 'Article Not Found'
                 });
             }
             return article;

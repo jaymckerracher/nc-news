@@ -65,6 +65,7 @@
   "POST /api/articles/:article_id/comments": {
     "description": "adds a comment that is related to one of the articles",
     "queries": [],
+    "exampleRequest": {"username": "icellusedkars", "body": "This is a new comment!"},
     "exampleResponse": {
       "comment": {
         "comment_id": 19,
