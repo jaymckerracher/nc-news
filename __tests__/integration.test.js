@@ -178,6 +178,7 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(201)
         .then(({body}) => {
             const {comment} = body;
+            console.log(comment, '<<<<<<<<<')
             expect(comment).toMatchObject({
                 comment_id: 19,
                 body: "This is a new comment!",
