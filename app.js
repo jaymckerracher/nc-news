@@ -2,7 +2,7 @@ const express = require('express');
 const { handlePsqlErrors, handleCustomErrors, handleInvalidPath, handleServerErrors } = require('./error-handlers');
 const { getEndpoints } = require('./controllers/api-controller');
 const { getArticleById, getArticles, patchArticleById } = require('./controllers/articles-controller');
-const { getCommentsByArticle, postCommentByArticle } = require('./controllers/comments-controller');
+const { getCommentsByArticle, postCommentByArticle, deleteCommentById } = require('./controllers/comments-controller');
 const { getTopics } = require(`${__dirname}/controllers/topics-controller`);
 
 const app = express();
@@ -20,6 +20,8 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticle);
 app.post('/api/articles/:article_id/comments', postCommentByArticle);
 
 app.get('/api/articles', getArticles);
+
+app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.use('*', (req, res, next) => {
     res.status(404).send({msg: 'Not Found'})

@@ -28,3 +28,7 @@ exports.checkValidComment = (username, body) => {
     if (typeof username !== 'string' || username.length < 1 || typeof body !== 'string' || body.length < 1) return false;
     return true;
 }
+
+exports.deleteComment = (id) => {
+    console.log('we are getting here!')
+}

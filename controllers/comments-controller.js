@@ -1,4 +1,4 @@
-const { selectCommentsFromArticle, insertCommentIntoArticle, checkValidComment } = require('../models/comments-model')
+const { selectCommentsFromArticle, insertCommentIntoArticle, checkValidComment, deleteComment } = require('../models/comments-model')
 const { checkArticleExists } = require('../models/articles-model');
 const { checkUserExists } = require('../models/users-model');
 
@@ -34,4 +34,9 @@ exports.postCommentByArticle = (req, res, next) => {
     } else {
         res.status(400).send({msg: 'Bad Request'})
     }
+};
+
+exports.deleteCommentById = (req, res, next) => {
+    const {comment_id} = req.params;
+    deleteComment(comment_id)
 }
