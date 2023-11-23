@@ -14,3 +14,11 @@ exports.checkUserExists = (username) => {
             return user;
         })
 }
+
+exports.selectAllUsers = () => {
+    return db
+        .query('SELECT * FROM users')
+        .then(({rows}) => {
+            return rows;
+        })
+}

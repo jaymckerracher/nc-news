@@ -59,7 +59,7 @@ describe('/api', () => {
 });
 
 describe('/api/topics', () => {
-    test('GET: 200 sends an array of topics to the client', () => {
+    test('GET: 200 sends an object with an array of topics to the client', () => {
         return request(app)
         .get('/api/topics')
         .expect(200)
@@ -381,6 +381,23 @@ describe('/api/articles', () => {
         })
     });
 });
+
+describe('/api/users', () => {
+    test('GET: 200 sends an object with an array containing all users', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            const {users} = body;
+            expect(users.length).toBe(4);
+            users.forEach(user => {
+                expect.objectContaining({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                })
+                expect(user.avatar_url.startsWith('https://')).toBe(true)
+            })
 
 describe('/api/comments/:comment_id', () => {
     test('DELETE: 204 responds with the correct status and message when a comment has been deleted', () => {
