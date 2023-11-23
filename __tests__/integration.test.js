@@ -398,6 +398,9 @@ describe('/api/users', () => {
                 })
                 expect(user.avatar_url.startsWith('https://')).toBe(true)
             })
+        })
+    })
+});
 
 describe('/api/comments/:comment_id', () => {
     test('DELETE: 204 responds with the correct status and message when a comment has been deleted', () => {

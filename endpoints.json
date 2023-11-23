@@ -125,6 +125,7 @@
         }
       ]
     }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "removes a row from the comments table based on a given id",
     "queries": [],
