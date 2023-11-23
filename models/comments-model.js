@@ -28,3 +28,22 @@ exports.checkValidComment = (username, body) => {
     if (typeof username !== 'string' || username.length < 1 || typeof body !== 'string' || body.length < 1) return false;
     return true;
 }
+
+exports.deleteComment = (id) => {
+    return db
+        .query(`
+        DELETE FROM comments
+        WHERE comment_id = $1
+        RETURNING *;
+        `, [id])
+        .then(({rows}) => {
+            const deletedComment = rows[0];
+            if (!deletedComment) {
+                return Promise.reject({
+                    status: 404,
+                    msg: 'Comment Not Found'
+                })
+            }
+            return deletedComment;
+        })
+}

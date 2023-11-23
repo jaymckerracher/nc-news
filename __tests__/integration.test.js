@@ -381,3 +381,29 @@ describe('/api/articles', () => {
         })
     });
 });
+
+describe('/api/comments/:comment_id', () => {
+    test('DELETE: 204 responds with the correct status and message when a comment has been deleted', () => {
+        return request(app)
+        .delete('/api/comments/7')
+        .expect(204)
+    });
+    test('DELETE: 400 sends an appropriate status and error message when the id is not valid', () => {
+        return request(app)
+        .delete('/api/comments/apple')
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('DELETE: 404 sends an appropriate status and error message when comment does not exist', () => {
+        return request(app)
+        .delete('/api/comments/999')
+        .expect(404)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Comment Not Found')
+        })
+    });
+});
