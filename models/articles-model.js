@@ -8,7 +8,7 @@ exports.selectArticle = (id) => {
             if (!article) {
                 return Promise.reject({
                     status: 404,
-                    msg: 'Not Found'
+                    msg: 'Article Not Found'
                 });
             }
             return article;
@@ -23,7 +23,7 @@ exports.checkArticleExists = (id) => {
             if(!article) {
                 return Promise.reject({
                     status: 404,
-                    msg: 'Not Found'
+                    msg: 'Article Not Found'
                 });
             }
             return article;
@@ -42,5 +42,23 @@ exports.selectAllArticles = () => {
         `)
         .then(({rows}) => {
             return rows;
+        })
+};
+
+exports.checkValidPatch = (inc_votes) => {
+    if (typeof inc_votes !== 'number' || !Number.isInteger(inc_votes) || inc_votes === 0) return false;
+    return true;
+}
+
+exports.patchArticleById = (id, votes) => {
+    return db
+        .query(`
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;
+        `, [votes, id])
+        .then(({rows}) => {
+            return rows[0];
         })
 };

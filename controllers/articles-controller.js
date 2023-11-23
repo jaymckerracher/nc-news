@@ -1,4 +1,4 @@
-const { selectArticle, selectAllArticles, patchArticleById } = require("../models/articles-model");
+const { selectArticle, checkArticleExists, selectAllArticles, patchArticleById, checkValidPatch } = require("../models/articles-model");
 
 exports.getArticleById = (req, res, next) => {
     const {article_id} = req.params;
@@ -24,4 +24,14 @@ exports.patchArticleById = (req, res, next) => {
     //catch (500)
     const {article_id} = req.params;
     const {inc_votes} = req.body;
+    if (checkValidPatch(inc_votes)) {
+        checkArticleExists(article_id)
+            .then(() => {
+                return patchArticleById(article_id, inc_votes)
+            })
+            .then(result => {
+                res.status(200).send({article: result});
+            })
+            .catch(next)
+    } else res.status(400).send({msg: 'Bad Request'})
 }
