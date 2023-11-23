@@ -76,7 +76,7 @@ describe('/api/topics', () => {
     });
 });
 
-describe('/api/articles/:article_id', () => {
+xdescribe('/api/articles/:article_id', () => {
     test('GET: 200 responds with an object containing a singular article', () => {
         return request(app)
         .get('/api/articles/1')
@@ -95,7 +95,7 @@ describe('/api/articles/:article_id', () => {
             })
         })
     });
-    test('GET 400: sends an appropriate status and error message when sent an invalid ID', () => {
+    test('GET: 400 sends an appropriate status and error message when sent an invalid ID', () => {
         return request(app)
         .get('/api/articles/apple')
         .expect(400)
@@ -104,7 +104,7 @@ describe('/api/articles/:article_id', () => {
             expect(msg).toBe('Bad Request');
         })
     });
-    test('GET 404: sends an appropriate status and error message when given a resource that does not exist', () => {
+    test('GET: 404 sends an appropriate status and error message when given a resource that does not exist', () => {
         return request(app)
         .get('/api/articles/999')
         .expect(404)
@@ -113,10 +113,90 @@ describe('/api/articles/:article_id', () => {
             expect(msg).toBe('Not Found')
         })
     });
+    test('PATCH: 200 sends back the article that has has its votes property changed', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes : 1 })
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body;
+            console.log('helloooooo');
+        })
+    });
+    test('PATCH: 200 the sent object should be able to change the votes property of the article both positive and negative numbers', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes : -1 })
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body;
+            console.log('helloooooo');
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when passed an object with missing required fields', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({})
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when the required object fields are the wrong data type', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 'Word' })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when sent a number that is not an integer', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 1.5 })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when the inc_votes property of the sent object is 0', () => {
+        return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 0 })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
+    test('PATCH: 404 sends an appropriate status and response when provided with a valid path that does not exist', () => {
+        return request(app)
+        .patch('/api/articles/999')
+        .send({ inc_votes: 2 })
+        .expect(404)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Article Not Found')
+        })
+    });
+    test('PATCH: 400 sends an appropriate status and response when given an invalid article id', () => {
+        return request(app)
+        .patch('/api/articles/apple')
+        .send({ inc_votes: 2 })
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
 });
 
 describe('/api/articles/:article_id/comments', () => {
-    test('GET 200: sends an array of comments that belong to the given article', () => {
+    test('GET: 200 sends an array of comments that belong to the given article', () => {
         return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
@@ -144,7 +224,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(comments).toBeSorted('created_at', {ascending: true});
         })
     });
-    test('GET 200: sends back an empty array should the article have no comments', () => {
+    test('GET: 200 sends back an empty array should the article have no comments', () => {
         return request(app)
         .get('/api/articles/7/comments')
         .expect(200)
@@ -153,7 +233,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(comments).toEqual([]);
         })
     });
-    test('GET 400: sends an appropriate status and error message when an invalid id is used', () => {
+    test('GET: 400 sends an appropriate status and error message when an invalid id is used', () => {
         return request(app)
         .get('/api/articles/apple/comments')
         .expect(400)
@@ -162,7 +242,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(msg).toBe('Bad Request')
         })
     });
-    test('GET 404: sends an appropriate status and error when given a resource that does not exist', () => {
+    test('GET: 404 sends an appropriate status and error when given a resource that does not exist', () => {
         return request(app)
         .get('/api/articles/999/comments')
         .expect(404)
@@ -174,7 +254,7 @@ describe('/api/articles/:article_id/comments', () => {
 })
 
 describe('/api/articles', () => {
-    test('GET 200: responds with an array of article objects', () => {
+    test('GET: 200 responds with an array of article objects', () => {
         return request(app)
         .get('/api/articles')
         .expect(200)

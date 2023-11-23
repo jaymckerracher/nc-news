@@ -22,5 +22,6 @@ exports.patchArticleById = (req, res, next) => {
     //check that article exists - 400 (function ready in other branch)
     //patch the article - 200
     //catch (500)
-    console.log('hello world')
+    const {article_id} = req.params;
+    const {inc_votes} = req.body;
 }
