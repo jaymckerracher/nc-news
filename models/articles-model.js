@@ -30,16 +30,32 @@ exports.checkArticleExists = (id) => {
         })
 };
 
-exports.selectAllArticles = () => {
+exports.selectAllArticles = (queries) => {
+    let queryString = `
+    SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments
+    ON articles.article_id = comments.article_id`
+    
+    const queriesArr = [];
+    if (queries) {
+        for (const key in queries) {
+            if(queriesArr.length) {
+                queryString += `\n    AND`
+            } else {
+                queryString += `\n    WHERE`
+            }
+            queriesArr.push(queries[key]);
+            queryString += ` ${key} = $${queriesArr.length}`
+        }
+    }
+
+    queryString += `
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC;`
+
     return db
-        .query(`
-        SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
-        FROM articles
-        LEFT JOIN comments
-        ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id
-        ORDER BY articles.created_at DESC;
-        `)
+        .query(queryString, queriesArr)
         .then(({rows}) => {
             return rows;
         })
@@ -62,3 +78,25 @@ exports.patchArticleById = (id, votes) => {
             return rows[0];
         })
 };
+
+exports.checkValidArticleQuery = (queries) => {
+    return db
+        .query(`SELECT * FROM articles`)
+        .then(({rows}) => {
+            const firstArticle = rows[0];
+            let validQuery = true;
+            for (const key in queries) {
+                if (!firstArticle[key]) {
+                    validQuery = false;
+                }
+            }
+            if (!validQuery) {
+                return Promise.reject({
+                    status: 400,
+                    msg: 'Bad Request - Invalid Field'
+                })
+            }
+            return Object.keys(queries);
+        })
+
+}

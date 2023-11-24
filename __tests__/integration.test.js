@@ -380,6 +380,45 @@ describe('/api/articles', () => {
             expect(articles).toBeSorted('created_at', {ascending: true});
         })
     });
+    test('GET: 200 responds with the correct array of objects when passed a query', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body;
+            expect(articles.length).toBe(1);
+            articles.forEach(article => {
+                expect(article.topic).toBe('cats')
+            })
+        })
+    });
+    test('GET: 200 sends an empty array when given a valid query with no matches', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body;
+            expect(articles).toEqual([])
+        })
+    });
+    test('GET: 400 sends an appropriate status and error message when given an invalid query value', () => {
+        return request(app)
+        .get('/api/articles?topic=batman')
+        .expect(404)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Not Found')
+        })
+    });
+    test('GET: 400 sends an appropriate status and error message when given an invalid query field', () => {
+        return request(app)
+        .get('/api/articles?website=www.news.com')
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request - Invalid Field')
+        })
+    });
 });
 
 describe('/api/users', () => {
