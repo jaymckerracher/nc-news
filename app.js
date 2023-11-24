@@ -1,5 +1,5 @@
 const express = require('express');
-const { handlePsqlErrors, handleCustomErrors, handleInvalidPath, handleServerErrors } = require('./error-handlers');
+const { handlePsqlErrors, handleCustomErrors, handleServerErrors } = require('./error-handlers');
 const { getEndpoints } = require('./controllers/api-controller');
 const { getArticleById, getArticles, patchArticleById } = require('./controllers/articles-controller');
 const { getUsers } = require('./controllers/users-controller');

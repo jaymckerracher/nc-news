@@ -1,4 +1,4 @@
-const { selectArticle, checkArticleExists, selectAllArticles, patchArticleById, checkValidPatch } = require("../models/articles-model");
+const { selectArticle, checkArticleExists, selectAllArticles, patchArticleById, checkValidPatch, checkValidArticleQuery } = require("../models/articles-model");
 
 exports.getArticleById = (req, res, next) => {
     const {article_id} = req.params;
@@ -10,11 +10,14 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    selectAllArticles()
-    .then(result => {
-        res.status(200).send({articles: result});
-    })
-    .catch(next);
+    checkValidArticleQuery(req.query)
+        .then(() => {
+            return selectAllArticles(req.query)
+        })
+        .then(result => {
+            res.status(200).send({articles: result});
+        })
+        .catch(next);
 }
 
 exports.patchArticleById = (req, res, next) => {

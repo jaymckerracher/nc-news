@@ -380,6 +380,36 @@ describe('/api/articles', () => {
             expect(articles).toBeSorted('created_at', {ascending: true});
         })
     });
+    test('GET: 200 responds with the correct array of objects when passed a query', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body;
+            expect(articles.length).toBe(1);
+            articles.forEach(article => {
+                expect(article.topic).toBe('cats')
+            })
+        })
+    });
+    test('GET: 200 sends an empty array when given a valid query with no matches', () => {
+        return request(app)
+        .get('/api/articles?topic=batman')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body;
+            expect(articles).toEqual([])
+        })
+    });
+    test('GET: 400 sends an approprate status and error message when not given a valid query', () => {
+        return request(app)
+        .get('/api/articles?website=www.news.com')
+        .expect(400)
+        .then(({body}) => {
+            const {msg} = body;
+            expect(msg).toBe('Bad Request')
+        })
+    });
 });
 
 describe('/api/users', () => {
