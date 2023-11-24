@@ -1,4 +1,5 @@
 const { selectArticle, checkArticleExists, selectAllArticles, patchArticleById, checkValidPatch, checkValidArticleQuery } = require("../models/articles-model");
+const { checkValidTopics } = require("../models/topics-models")
 
 exports.getArticleById = (req, res, next) => {
     const {article_id} = req.params;
@@ -11,6 +12,12 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
     checkValidArticleQuery(req.query)
+        .then(() => {
+            if (req.query.topic) {
+                return checkValidTopics(req.query)
+            }
+            return;
+        })
         .then(() => {
             return selectAllArticles(req.query)
         })

@@ -93,10 +93,10 @@ exports.checkValidArticleQuery = (queries) => {
             if (!validQuery) {
                 return Promise.reject({
                     status: 400,
-                    msg: 'Bad Request'
+                    msg: 'Bad Request - Invalid Field'
                 })
             }
-            return;
+            return Object.keys(queries);
         })
 
 }
