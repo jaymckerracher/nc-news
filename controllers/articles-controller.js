@@ -1,4 +1,5 @@
 const { selectArticle, checkArticleExists, selectAllArticles, patchArticleById, checkValidPatch, checkValidArticleQuery } = require("../models/articles-model");
+const { checkValidQueries, checkValidQueryFields } = require("../models/general-models");
 const { checkValidTopics } = require("../models/topics-models")
 
 exports.getArticleById = (req, res, next) => {
@@ -11,11 +12,13 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    checkValidArticleQuery(req.query)
+    // checkValidArticleQuery(req.query)
+    checkValidQueries('articles', req.query)
         .then(() => {
             if (req.query.topic) {
                 return checkValidTopics(req.query)
             }
+            // if (req.query) return checkValidQueryFields('articles', req.query)
             return;
         })
         .then(() => {

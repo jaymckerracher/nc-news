@@ -86,6 +86,7 @@ exports.patchArticleById = (id, votes) => {
 };
 
 exports.checkValidArticleQuery = (queries) => {
+    const keys = Object.keys[queries]
     return db
         .query(`SELECT * FROM articles`)
         .then(({rows}) => {
@@ -102,7 +103,7 @@ exports.checkValidArticleQuery = (queries) => {
                     msg: 'Bad Request - Invalid Field'
                 })
             }
-            return Object.keys(queries);
+            return;
         })
 
 }

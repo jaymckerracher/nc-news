@@ -389,7 +389,7 @@ describe('/api/articles', () => {
             expect(articles).toBeSorted('created_at', {ascending: true});
         })
     });
-    test('GET: 200 responds with the correct array of objects when passed a query', () => {
+    test.only('GET: 200 responds with the correct array of objects when passed a query', () => {
         return request(app)
         .get('/api/articles?topic=cats')
         .expect(200)
@@ -425,7 +425,15 @@ describe('/api/articles', () => {
         .expect(400)
         .then(({body}) => {
             const {msg} = body;
-            expect(msg).toBe('Bad Request - Invalid Field')
+            expect(msg).toBe('Bad Request - Invalid Query')
+        })
+    });
+    xtest('GET: 200 sends back the correct array when given a sort by query', () => {
+        return request(app)
+        .get('/api/articles?sort_by=comment_count')
+        .expect(200)
+        .then(({body}) => {
+            console.log(body, '<<<<<<')
         })
     });
 });
