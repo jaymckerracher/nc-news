@@ -26,19 +26,24 @@ exports.checkValidQueries = (table, queries) => {
 
 exports.checkValidQueryFields = (table, queries) => {
     const queryValues = Object.values(queries);
+    const queryKeys = Object.keys(queries)
     return db
         .query(`SELECT * FROM ${table}`)
         .then(({rows}) => {
-            const firstRow = rows[0];
-            const validFields = false;
-            queryValues.forEach(value => {
-                if(!firstRow[value]) {
-                    Promise.reject({
-                        status: 404,
-                        msg: 'Not Found'
-                    })
-                }
-            })
+            // check that each queryvalue is part of the rows
+            // if each is part of a
+            let validFields = true;
+            for (let i=0; i<queryValues.length; i++) {
+                const currentValue = queryValues[i];
+                const currentKey = queryKeys[i];
+                validFields = rows.some(row => row[currentKey] === currentValue);
+            }
+            if (!validFields) {
+                Promise.reject({
+                    status: 404,
+                    msg: 'Not Found - <<<<'
+                })
+            }
             return;
         })
 }

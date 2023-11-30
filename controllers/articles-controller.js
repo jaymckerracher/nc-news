@@ -18,7 +18,7 @@ exports.getArticles = (req, res, next) => {
             if (req.query.topic) {
                 return checkValidTopics(req.query)
             }
-            // if (req.query) return checkValidQueryFields('articles', req.query)
+            // if (req.query) return checkValidQueryFields('topics', req.query)
             return;
         })
         .then(() => {

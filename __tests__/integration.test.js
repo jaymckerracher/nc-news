@@ -389,7 +389,7 @@ describe('/api/articles', () => {
             expect(articles).toBeSorted('created_at', {ascending: true});
         })
     });
-    test.only('GET: 200 responds with the correct array of objects when passed a query', () => {
+    test('GET: 200 responds with the correct array of objects when passed a query', () => {
         return request(app)
         .get('/api/articles?topic=cats')
         .expect(200)
