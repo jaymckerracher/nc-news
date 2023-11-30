@@ -85,25 +85,34 @@ exports.patchArticleById = (id, votes) => {
         })
 };
 
-exports.checkValidArticleQuery = (queries) => {
-    const keys = Object.keys[queries]
-    return db
-        .query(`SELECT * FROM articles`)
-        .then(({rows}) => {
-            const firstArticle = rows[0];
-            let validQuery = true;
-            for (const key in queries) {
-                if (!firstArticle[key]) {
-                    validQuery = false;
-                }
-            }
-            if (!validQuery) {
-                return Promise.reject({
-                    status: 400,
-                    msg: 'Bad Request - Invalid Field'
+exports.checkValidArticleQueryValue = (key, value) => {
+    if (key !== 'topic' && key !== 'author') {
+        return Promise.resolve();
+    }
+    else {
+        const lookup = {
+            topic: 'topics',
+            author: 'users'
+        }
+        return db
+            .query(`SELECT * FROM ${lookup[key]}`)
+            .then(({rows}) => {
+                let validQuery = false;
+                rows.forEach(row => {
+                    if (key === 'topic' && row.slug === value) {
+                        validQuery = true;
+                    }
+                    if (key === 'author' && row.username === value) {
+                        validQuery = true;
+                    }
                 })
-            }
-            return;
-        })
-
+                if (!validQuery) {
+                    return Promise.reject({
+                        status: 404,
+                        msg: `404 - ${key} not found`
+                    })
+                }
+                return Promise.resolve();
+            })
+    }
 }

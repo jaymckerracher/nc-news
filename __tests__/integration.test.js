@@ -416,7 +416,7 @@ describe('/api/articles', () => {
         .expect(404)
         .then(({body}) => {
             const {msg} = body;
-            expect(msg).toBe('Not Found')
+            expect(msg).toBe('404 - topic not found')
         })
     });
     test('GET: 400 sends an appropriate status and error message when given an invalid query field', () => {
