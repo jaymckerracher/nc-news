@@ -49,19 +49,40 @@ exports.selectAllArticles = (queries) => {
     const queriesArr = [];
     if (queries) {
         for (const key in queries) {
-            if (queriesArr.length) {
-                queryString += `\n    AND`;
-            } else {
-                queryString += `\n    WHERE`;
+            if (key !== "sort_by" && key !== "order") {
+                // adds and or where to the query string
+                if (queriesArr.length) {
+                    queryString += `\n    AND`;
+                } else {
+                    queryString += `\n    WHERE`;
+                }
+
+                if (queries[key].includes("_")) {
+                    queriesArr.push(`${queries[key].split("_").join(" ")}`);
+                } else {
+                    queriesArr.push(queries[key]);
+                }
+                queryString += ` articles.${key} = $${queriesArr.length}`;
             }
-            queriesArr.push(queries[key]);
-            queryString += ` ${key} = $${queriesArr.length}`;
         }
     }
 
     queryString += `
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`;
+    GROUP BY articles.article_id`;
+
+    if (queries.sort_by) {
+        queriesArr.push(queries.sort_by);
+        queryString += `
+        ORDER BY $${queriesArr.length}`;
+    } else {
+        queryString += `
+        ORDER BY articles.created_at DESC;`;
+    }
+
+    if (queries.order) {
+        queriesArr.push(queries.order);
+        queryString += `$${queriesArr.length};`;
+    }
 
     return db.query(queryString, queriesArr).then(({ rows }) => {
         return rows;
@@ -92,46 +113,4 @@ exports.patchArticleById = (id, votes) => {
         .then(({ rows }) => {
             return rows[0];
         });
-};
-
-exports.checkValidArticleQueryValue = (key, value) => {
-    if (key !== "topic" && key !== "author") {
-        // return Promise.resolve();
-        // here is where you have to make the query to the articles table for the rest of the queries
-        return db.query(`SELECT * FROM articles`).then(({ rows }) => {
-            let validQuery = false;
-            rows.forEach((row) => {
-                if (key[value]) validQuery = true;
-            });
-            if (!validQuery) {
-                Promise.reject({
-                    status: 404,
-                    msg: `404 - ${key}: ${value} not found`,
-                });
-            }
-        });
-    } else {
-        const lookup = {
-            topic: "topics",
-            author: "users",
-        };
-        return db.query(`SELECT * FROM ${lookup[key]}`).then(({ rows }) => {
-            let validQuery = false;
-            rows.forEach((row) => {
-                if (key === "topic" && row.slug === value) {
-                    validQuery = true;
-                }
-                if (key === "author" && row.username === value) {
-                    validQuery = true;
-                }
-            });
-            if (!validQuery) {
-                return Promise.reject({
-                    status: 404,
-                    msg: `404 - ${key} not found`,
-                });
-            }
-            return Promise.resolve();
-        });
-    }
 };
