@@ -465,10 +465,20 @@ describe("/api/articles", () => {
     });
     test("GET: 200 sends back the correct array when given a sort by query", () => {
         return request(app)
-            .get("/api/articles?sort_by=created_at")
+            .get("/api/articles?sort_by=votes")
             .expect(200)
             .then(({ body }) => {
-                // console.log(body, "<<<<<<");
+                const {articles} = body;
+                expect(articles[articles.length - 1].votes).toBe(100);
+            });
+    });
+    xtest("GET: 200 sends back the correct array when given a sort by query along with an order statement", () => {
+        return request(app)
+            .get("/api/articles?sort_by=votes&order=DESC")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles[0].votes).toBe(100);
             });
     });
 });

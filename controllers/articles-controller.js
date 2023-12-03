@@ -1,3 +1,7 @@
+// general models require
+const { checkValidQuery, checkValidSortBy } = require("../models/general-models");
+
+// articles models require
 const {
     selectArticle,
     checkArticleExists,
@@ -5,25 +9,13 @@ const {
     patchArticleById,
     checkValidPatch,
 } = require("../models/articles-model");
-const { checkValidQuery, checkValidSortBy } = require("../models/general-models");
 
-exports.getArticleById = (req, res, next) => {
-    const { article_id } = req.params;
-    selectArticle(article_id)
-        .then((result) => {
-            res.status(200).send({ article: result });
-        })
-        .catch(next);
-};
+// ----------
 
 exports.getArticles = (req, res, next) => {
     const queryKeys = Object.keys(req.query);
     const queryValues = Object.values(req.query);
-
     const queryPromises = [];
-
-    
-
     for (let i=0; i<queryKeys.length; i++) {
         if (!req.query) Promise.resolve();
         else if (queryKeys[i] === 'topic') {
@@ -50,6 +42,15 @@ exports.getArticles = (req, res, next) => {
         res.status(200).send({ articles: result });
     })
     .catch(next);
+};
+
+exports.getArticleById = (req, res, next) => {
+    const { article_id } = req.params;
+    selectArticle(article_id)
+        .then((result) => {
+            res.status(200).send({ article: result });
+        })
+        .catch(next);
 };
 
 exports.patchArticleById = (req, res, next) => {
