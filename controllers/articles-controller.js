@@ -4,7 +4,6 @@ const { checkValidQuery, checkValidSortBy } = require("../models/general-models"
 // articles models require
 const {
     selectArticle,
-    checkArticleExists,
     selectAllArticles,
     patchArticleById,
     checkValidPatch,
@@ -57,7 +56,7 @@ exports.patchArticleById = (req, res, next) => {
     const { article_id } = req.params;
     const { inc_votes } = req.body;
     if (checkValidPatch(inc_votes)) {
-        checkArticleExists(article_id)
+        selectArticle(article_id)
             .then(() => {
                 return patchArticleById(article_id, inc_votes);
             })

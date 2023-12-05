@@ -4,12 +4,12 @@ const {
     checkValidComment,
     deleteComment,
 } = require("../models/comments-model");
-const { checkArticleExists } = require("../models/articles-model");
+const { selectArticle } = require("../models/articles-model");
 const { checkUserExists } = require("../models/users-model");
 
 exports.getCommentsByArticle = (req, res, next) => {
     const { article_id } = req.params;
-    checkArticleExists(article_id)
+    selectArticle(article_id)
         .then(() => {
             return selectCommentsFromArticle(article_id);
         })
@@ -27,7 +27,7 @@ exports.postCommentByArticle = (req, res, next) => {
     if (checkValidComment(username, body)) {
         checkUserExists(username)
             .then(() => {
-                return checkArticleExists(article_id);
+                return selectArticle(article_id);
             })
             .then(() => {
                 return insertCommentIntoArticle(article_id, username, body);
