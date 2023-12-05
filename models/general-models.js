@@ -2,7 +2,7 @@ const db = require("../db/connection");
 
 exports.checkValidQuery = (table, queryKey, queryValue, fieldName='') => {
     if (fieldName) queryKey = fieldName;
-    queryValue = queryValue.split('_').join(' ');
+    queryValue = queryValue.split('%20').join(' ');
     return db
         .query(`SELECT * FROM ${table}`)
         .then(({rows}) => {

@@ -2,11 +2,13 @@ const db = require(`${__dirname}/../db/connection`);
 
 // GET
 exports.selectAllArticles = (queries) => {
+    // creating initial string
     let queryString = `
 SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
 FROM articles
 LEFT JOIN comments
 ON articles.article_id = comments.article_id`;
+    // handling non sort_by/order queries
     const queriesArr = [];
     if (queries) {
         for (const key in queries) {
@@ -28,6 +30,7 @@ ON articles.article_id = comments.article_id`;
     }
     queryString += `
 GROUP BY articles.article_id`;
+    // handling sort_by query
     if (queries.sort_by) {
         queriesArr.push(queries.sort_by);
         queryString += `
@@ -35,17 +38,18 @@ ORDER BY
     CASE
         WHEN $${queriesArr.length} = 'votes' THEN articles.votes
     END`;
+    // handling order query
+        let order;
         if (queries.order) {
-            queriesArr.push(queries.order);
+            orderQuery = queries.order;
             queryString += `
-$${queriesArr.length};`;
+${orderQuery};`;
         }
-    }
-    else {
+    } else {
         queryString += `
         ORDER BY articles.created_at DESC;`;
     }
-    console.log(queryString, queriesArr, '<<<<<')
+    // making the query
     return db.query(queryString, queriesArr).then(({ rows }) => {
         return rows;
     });

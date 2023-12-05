@@ -414,7 +414,7 @@ describe("/api/articles", () => {
     });
     test("GET: 200 repsonds with the correct array of objects when passed a query that doesn't relate to another table", () => {
         return request(app)
-            .get('/api/articles?title=Am_I_a_cat?')
+            .get('/api/articles?title=Am I a cat?')
             .expect(200)
             .then(({ body }) => {
                 const { articles } = body;
@@ -472,13 +472,33 @@ describe("/api/articles", () => {
                 expect(articles[articles.length - 1].votes).toBe(100);
             });
     });
-    xtest("GET: 200 sends back the correct array when given a sort by query along with an order statement", () => {
+    test("GET: 200 sends back the correct array when given a sort by query along with an order statement", () => {
         return request(app)
             .get("/api/articles?sort_by=votes&order=DESC")
             .expect(200)
             .then(({ body }) => {
                 const { articles } = body;
                 expect(articles[0].votes).toBe(100);
+            });
+    });
+    test('GET: 400 sends an appropriate status and error message when given an invalid sort_by query', () => {
+        return request(app)
+            .get("/api/articles?sort_by=apple")
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe('Bad Request - Invalid Query')
+            });
+    });
+    test('GET: 400 sends an appropriate status and error message when given an order query without a sort_by', () => {
+        return request(app)
+            .get("/api/articles?order=DESC")
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(
+                    "Bad Request - Cannot Have 'order' Query Without 'sort_by' Query"
+                );
             });
     });
 });
