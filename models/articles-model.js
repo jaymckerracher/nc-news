@@ -80,9 +80,8 @@ exports.selectArticle = (id) => {
 };
 
 // PATCH
-exports.checkValidPatch = (inc_votes) => {
+exports.checkValidVotesObj = (inc_votes) => {
     if (
-        typeof inc_votes !== "number" ||
         !Number.isInteger(inc_votes) ||
         inc_votes === 0
     )
@@ -90,7 +89,7 @@ exports.checkValidPatch = (inc_votes) => {
     return true;
 };
 
-exports.patchArticleById = (id, votes) => {
+exports.updateArticle = (id, votes) => {
     return db
         .query(
             `

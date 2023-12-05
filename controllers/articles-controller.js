@@ -5,8 +5,8 @@ const { checkValidQuery, checkValidSortBy } = require("../models/general-models"
 const {
     selectArticle,
     selectAllArticles,
-    patchArticleById,
-    checkValidPatch,
+    checkValidVotesObj,
+    updateArticle,
 } = require("../models/articles-model");
 
 // ----------
@@ -55,10 +55,10 @@ exports.getArticleById = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
     const { article_id } = req.params;
     const { inc_votes } = req.body;
-    if (checkValidPatch(inc_votes)) {
+    if (checkValidVotesObj(inc_votes)) {
         selectArticle(article_id)
             .then(() => {
-                return patchArticleById(article_id, inc_votes);
+                return updateArticle(article_id, inc_votes);
             })
             .then((result) => {
                 res.status(200).send({ article: result });

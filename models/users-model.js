@@ -1,6 +1,6 @@
 const db = require(`${__dirname}/../db/connection`);
 
-exports.checkUserExists = (username) => {
+exports.selectUser = (username) => {
     return db
         .query('SELECT * FROM users WHERE username = $1', [username])
         .then(({rows}) => {
