@@ -13,7 +13,7 @@ exports.selectCommentsFromArticle = (id) => {
         })
 };
 
-exports.insertCommentIntoArticle = (id, username, body) => {
+exports.addComment = (id, username, body) => {
     return db
         .query(`
         INSERT INTO comments (body, author, article_id)
