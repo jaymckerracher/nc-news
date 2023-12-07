@@ -4,7 +4,7 @@ const db = require(`${__dirname}/../db/connection`);
 exports.selectAllArticles = (queries) => {
     // creating initial string
     let queryString = `
-SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
+SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
 FROM articles
 LEFT JOIN comments
 ON articles.article_id = comments.article_id`;
@@ -36,7 +36,8 @@ GROUP BY articles.article_id`;
         queryString += `
 ORDER BY
     CASE
-        WHEN $${queriesArr.length} = 'votes' THEN articles.votes
+    WHEN $${queriesArr.length} = 'article_id' THEN articles.article_id
+    WHEN $${queriesArr.length} = 'votes' THEN articles.votes
     END`;
     // handling order query
         let order;
