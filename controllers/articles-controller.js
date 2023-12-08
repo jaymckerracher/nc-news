@@ -27,7 +27,7 @@ exports.getArticles = (req, res, next) => {
             queryPromises.push(checkValidSortBy('articles', queryValues[i])); // sort by
         }
         else if (queryKeys[i] === 'order') {
-        queryKeys.includes('sort_by') ? queryPromises.push(Promise.resolve()) : queryPromises.push(Promise.reject({status: 400, msg: "Bad Request - Cannot Have 'order' Query Without 'sort_by' Query"})); // order
+            queryKeys.includes('sort_by') ? queryPromises.push(Promise.resolve()) : queryPromises.push(Promise.reject({status: 400, msg: "Bad Request - Cannot Have 'order' Query Without 'sort_by' Query"})); // order
         }
         else {
             queryPromises.push(checkValidQuery('articles', queryKeys[i], queryValues[i])); // non table field
