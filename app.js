@@ -1,5 +1,6 @@
 // express require
 const express = require("express");
+const cors = require("cors");
 
 // error handlers require
 const {
@@ -28,6 +29,9 @@ const {
 // ----------
 
 const app = express();
+
+app.use(cors());
+
 app.use(express.json());
 
 // api
