@@ -33,19 +33,22 @@ GROUP BY articles.article_id`;
     // handling sort_by query
     if (queries.sort_by) {
         queriesArr.push(queries.sort_by);
+        let validOrder = false;
+        if (queries.order) {
+            if (queries.order && queries.order.toLowerCase() === 'asc' || queries.order.toLowerCase() === 'desc') {
+                validOrder = true;
+            }
+        }
         queryString += `
 ORDER BY
     CASE
-    WHEN $${queriesArr.length} = 'article_id' THEN articles.article_id
-    WHEN $${queriesArr.length} = 'votes' THEN articles.votes
-    END`;
-    // handling order query
-        let order;
-        if (queries.order) {
-            orderQuery = queries.order;
-            queryString += `
-${orderQuery};`;
-        }
+        WHEN $${queriesArr.length} = 'article_id' THEN articles.article_id
+        WHEN $${queriesArr.length} = 'votes' THEN articles.votes
+        WHEN $${queriesArr.length} = 'comment_count' THEN COUNT(comments.article_id)
+        END ${validOrder ? queries.order : ''},
+    CASE
+        WHEN $${queriesArr.length} = 'created_at' THEN articles.created_at
+        END ${validOrder ? queries.order : ''}`;
     } else {
         queryString += `
         ORDER BY articles.created_at DESC;`;
@@ -53,7 +56,8 @@ ${orderQuery};`;
     // making the query
     return db.query(queryString, queriesArr).then(({ rows }) => {
         return rows;
-    });
+    })
+    .catch(err => console.log(err))
 };
 
 exports.selectArticle = (id) => {
