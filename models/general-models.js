@@ -28,6 +28,7 @@ exports.checkValidQuery = (table, queryKey, queryValue, fieldName='') => {
 }
 
 exports.checkValidSortBy = (table, queryValue) => {
+    if (table === 'articles' && queryValue === 'comment_count') return Promise.resolve();
     return db
         .query(`SELECT * FROM ${table}`)
         .then(({rows}) => {

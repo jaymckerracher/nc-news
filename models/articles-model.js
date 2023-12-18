@@ -57,7 +57,6 @@ ORDER BY
     return db.query(queryString, queriesArr).then(({ rows }) => {
         return rows;
     })
-    .catch(err => console.log(err))
 };
 
 exports.selectArticle = (id) => {
